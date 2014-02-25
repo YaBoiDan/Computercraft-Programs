@@ -189,23 +189,19 @@ while true do
 	elseif Command[1] == "liquid" then
 		if Command[2] == "show" then
 			Request = "Req:Liquids"
-			--[[RequestMessage()
+			RequestMessage()
 			if Message ~= nil then
 				Message=split(Message,'\:')
 				LiquidWater = "Amount Of Water: " .. Message[3] .. " / " .. Message[4]
 				LiquidLava = "Amount Of Lava: " .. Message[5] .. " / " .. Message[6]
 				LiquidOil = "Amount Of Oil: " .. Message[7] .. " / " .. Message[8]
-				LiquidFuel = "Amount Of Fuel: " .. Message[9] .. " / " .. Message[10] ]]
+				LiquidFuel = "Amount Of Fuel: " .. Message[9] .. " / " .. Message[10]
+			else -- Debug display
 				LiquidWater = "Amount Of Water: 10085430"
 				LiquidLava = "Amount Of Lava: 994557473"
 				LiquidOil = "Amount Of Oil: 747357"
 				LiquidFuel = "Amount Of Fuel: 85678464"
-				LiquidWaterText.setText(LiquidWater)
-				LiquidLavaText.setText(LiquidLava)
-				LiquidOilText.setText(LiquidOil)
-				LiquidFuelText.setText(LiquidFuel)
-				LiquidMain.setOpacity(0.5)
-			--end
+			end
 		elseif Command[2] == "hide" then
 			LiquidWaterText.setText("")
 			LiquidLavaText.setText("")
@@ -213,22 +209,24 @@ while true do
 			LiquidFuelText.setText("")
 			LiquidMain.setOpacity(0)
 		end
-	--elseif Command[1] == "ping" then
-		Request = "Req:Ping"
-			-- handle multiple simultanious rednet messages, or Ping individualy and group into a tabele
+	elseif Command[1] == "ping" then
+		Request = "Req:Ping" -- Ping must be built into receiving program
+		-- handle multiple simultaneous rednet messages, or Ping individually and group into a table.
 			print ">Pinging"
-			local PingTable = {}
-			for i=1,25 do
+			--local PingTable = {}
+			for i=1,25 do -- Need to find out how many computers are alive
 				rednet.send(i,Request)
 				PingID,Response = rednet.receive(0.2)
 				if Response ~= nil then
-					local Response=split(Response,'\ ') 
-					table.insert(PingTable,Response[3])
-					end
+					local Response=split(Response,'\:')
+					print (PingID,":",Response[3]) -- Write to log too?
+					--table.insert(PingTable,Response[3])
+				else
+					print (i,":No Response")
+				end
 			end
 			print ">Done"
-			printTbl(PingTable)
-			print(PingTable[1])
+			--printTbl(PingTable)
 	elseif Command[1] == "chat" then
 		local P = getPeripherals("chat")
 		local Text = ""
