@@ -1,0 +1,49 @@
+while true do 
+  term.clear()
+  term.setCursorPos(17,1)
+  print "Light Control"
+  term.setCursorPos(1,2)
+  print ""
+  print "1. Turn 1 On"
+  print "2. Turn 1 Off "
+  print "3. Turn 2 On "
+  print "4. Turn 2 Off "
+  print "5. Turn 3 On "
+  print "6. Turn 3 Off "
+	input = read()
+  local cur = rs.getBundledOutput("back")
+  if input == "1" then
+		a = colors.combine(cur,colors.blue)
+		rs.setBundledOutput("back",a)
+		print "Blue Activated"
+		sleep(2)
+	elseif input == "2" then
+		b=colors.subtract(cur,colors.blue)
+		rs.setBundledOutput("back",b)
+		print "Blue Deactivated"
+		sleep(2)
+	elseif input == "3" then
+		c = colors.combine(cur,colors.lime)
+		rs.setBundledOutput("back",c)
+		print "Lime Activated"
+		sleep(2)
+	elseif input == "4" then
+		d = colors.subtract(cur,colors.lime)
+		rs.setBundledOutput("back",d)
+		print " Lime Deactivated "
+		sleep(2)
+	elseif input == "5" then
+		e = colors.combine(cur,colors.red)
+		rs.setBundledOutput("back",e)
+		print "Red Activated"
+		sleep(2)
+	elseif input == "6" then
+		f = colors.subtract(cur,colors.red)
+		rs.setBundledOutput("back",f)
+		print "Red Deactivated"
+		sleep(2)
+	else
+		print "Please Choose Another Option!"
+		sleep(2)
+	end
+end
