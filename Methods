@@ -1,0 +1,15 @@
+function printTbl(tbl)
+   for i,j in pairs(tbl) do
+      print(i..":"..j)
+   end
+end
+
+print "Peripherals Attatched:"
+names = peripheral.getNames()
+printTbl(names)
+print ""
+print "Methods Available For Pre-Configured:"
+meths = peripheral.getMethods("redstone_energy_cell_0")
+printTbl(meths)
+print "Calling Methods For Pre-Configured:"
+local store = peripheral.call("redstone_energy_cell_0","getEnergyStored")

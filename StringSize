@@ -1,0 +1,12 @@
+while true do -- Gets pixel size of text for Glasses Bridge
+	print "Please Type Word To Get Size:"
+	Word = read()
+	if Word ~= nil then
+		P = peripheral.wrap("bottom") -- Bridge side
+		Length = P.getStringWidth(Word)
+		print (Length)
+		print "Leave a gap of 1 or 2 pixels each side!"
+	else
+		print "No Blanks!"
+	end
+end

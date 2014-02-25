@@ -1,0 +1,53 @@
+local function getPeripherals(sType)
+	local P = {}
+	for _,name in ipairs(peripheral.getNames()) do
+		if peripheral.getType(name) == sType then
+			P[#P + 1] = peripheral.wrap(name)
+		end
+	end
+	return P
+end
+
+MyID = os.getComputerID()
+rednet.open("back")
+term.clear()
+term.setCursorPos(1,1)
+print ("Server Running...")
+print ("My ID: ",MyID)
+while true do
+	local ID,Message = rednet.receive()
+	if Message == "Req:Energy" then
+		print(Message)
+		local P = getPeripherals("batbox")
+		CapAllEU = 0
+		StoreAllEU = 0
+		CapAllMJ = 0
+		StoreAllMJ = 0
+		for i=1, #P do
+			CapEU = P[i].getCapacity()
+			StoreEU = P[i].getStored()
+			CapAllEU = CapAllEU + CapEU
+			StoreAllEU = StoreAllEU + StoreEU
+		end
+		local P = getPeripherals("redstone_energy_cell")
+		for i=1, #P do
+			CapMJ = P[i].getMaxEnergyStored()
+			StoreMJ = P[i].getEnergyStored()
+			CapAllMJ = CapAllMJ + CapMJ
+			StoreAllMJ = StoreAllMJ + StoreMJ
+		end
+		print "---------------------------------------------------"
+		print (">Request placed by ID ",ID)
+		print ("Total EU: ",StoreAllEU," / ",CapAllEU)
+		print ("Total MJ: ",StoreAllMJ," / ",CapAllMJ)
+		Response = "Req:Energy:" .. StoreAllEU .. ":" .. CapAllEU .. ":" .. StoreAllMJ .. ":" .. CapAllMJ
+		rednet.send(ID,Response)
+	elseif Message == "Req:Ping" then
+		sleep(0.2)
+		print "---------------------------------------------------"
+		print (">Request placed by ID ",ID)
+		print ">Device requested Ping, Responding!"
+		local Pong = "Req:Ping:" .. MyID
+		rednet.send(ID,Pong)
+	end
+end

@@ -1,0 +1,68 @@
+RednetSide = "top"
+
+local function split(pString, pPattern)
+	local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
+	local fpat = "(.-)" .. pPattern
+	local last_end = 1
+	local s, e, cap = pString:find(fpat, 1)
+	while s do
+	if s ~= 1 or cap ~= "" then
+		table.insert(Table,cap)
+	end
+	last_end = e+1
+	s, e, cap = pString:find(fpat, last_end)
+	end
+	if last_end <= #pString then
+		cap = pString:sub(last_end)
+		table.insert(Table, cap)
+	end
+	return Table
+end
+
+local function getPeripherals(sType)
+	local P = {}
+	for _,name in ipairs(peripheral.getNames()) do
+		if peripheral.getType(name) == sType then
+			P[#P + 1] = peripheral.wrap(name)
+		end
+	end
+	return P
+end
+
+rednet.open(RednetSide)
+term.clear()
+term.setCursorPos(1,1)
+print ("Server Running...")
+print ("My ID: ",os.getComputerID())
+while true do
+	local ID,Message = rednet.receive()
+	print "---------------------------------------------------"
+	print (">Request placed by ID ",ID)
+	print (">Message: ",Message)
+	local Message=split(Message,'\:')
+	if Message[2] == "Tannoy" then
+		rednet.send(ID,"Announcing")
+		local Text = ""
+		for i=3,#Message do
+			Text = Text .. Message[i] .. " "
+		end
+		--print (Text)
+		
+		local P = getPeripherals("note")
+		for i=1,#P do
+			P[i].playNote(0,24)
+			sleep(0.5)
+			P[i].playNote(0,18)
+		end
+		sleep(1)
+		local P = getPeripherals("chat") -- ONLY FOR MASTER SERVER!
+		for i=1,#P do
+			P[i].say(Text)
+		end
+		local P = getPeripherals("speaker")
+		for i=1,#P do
+			P[i].speak(Text)
+		end
+	print ">Announced"
+	end
+end

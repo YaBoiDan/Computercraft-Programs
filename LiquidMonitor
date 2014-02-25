@@ -1,0 +1,53 @@
+local function getPeripherals(sType)
+	local P = {}
+	for _,name in ipairs(peripheral.getNames()) do
+		if peripheral.getType(name) == sType then
+			P[#P + 1] = peripheral.wrap(name)
+		end
+	end
+	return P
+end
+
+function printTbl(tbl)
+	for i,j in pairs(tbl) do
+	print(i..":"..j)
+	end
+end
+
+rednet.open("top")
+term.clear()
+term.setCursorPos(1,1)
+print ("Server Running...")
+print ("My ID: ",os.getComputerID())
+
+local tableInfo = valve.getTanks("unknown")
+local valve = peripheral.wrap("tank_0")
+for k, v in pairs(store) do
+	for x, y in pairs(v) do
+		print(x .. ": " .. y)
+	end
+end
+
+--[[print "Peripherals Attatched:"
+names = peripheral.getNames()
+printTbl(names)
+print ""
+print "Methods Available For Pre-Configured:"
+meths = peripheral.getMethods("tank_0")
+printTbl(meths)
+print "Calling Methods For Pre-Configured:"
+local store = peripheral.call("tank_0",getTanks)
+print (store)]]
+
+--[[while true do
+	local ID,Message = rednet.receive()
+	if Message == "Req:Liquid" then
+		print(Message)
+		
+		print "---------------------------------------------------"
+		print (">Request placed by ID ",ID)
+		print ("Total EU: ",," / ")
+		print ("Total MJ: ",," / ",
+		Response = "Req:Liquid:" ..  .. ":" ..  .. ":" ..  .. ":" .. 
+		rednet.send(ID,Response)
+	end]]
