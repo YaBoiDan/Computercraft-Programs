@@ -1,0 +1,11 @@
+while true do -- To break, place startup file on disk and reboot
+	os.pullEvent = os.pullEventRaw
+	term.clear()
+	term.setCursorPos(18,7)
+	print "TERMINAL LOCKED!"
+	term.setCursorPos(11,9)
+	print "Please Contact Administrator"
+	term.setCursorPos(11,10)
+	print "This Terminal May Be Damaged"
+	sleep(1)
+end

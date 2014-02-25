@@ -1,0 +1,73 @@
+ClearenceLevel = 3
+DoorSide = "back"
+DiskSide = "top"
+
+function Door()
+	redstone.setOutput("back",true)
+	sleep(5)
+	redstone.setOutput("back",false)
+end
+
+function Maintenance()
+	term.Clear()
+	term.setCursorPos(1,1)
+	print "Maintenance Mode"
+	print ""
+	print "1) Disable Reader"
+	print "2) Force Open"
+	print "----------------------------------------"
+	input = read()
+	if input == "1" then
+		print "1) Lock Open"
+		print "2) Lock Closed"
+		input1 = read()
+		if input1 == "1" then
+			State = "Open"
+			redstone.setOutput(DoorSide,true)
+		elseif input1 == "2" then
+			State = "Closed"
+		end
+		print ("State:",State)
+		print "Press 'M' to re-activate"
+		while true do
+			sleep(0.5)
+			disk.eject(DiskSide)
+			e, k = os.pullEvent("key")
+				if k == 50 then
+					if State == "Open" then
+						redstone.setOutput(DoorSide,false)
+					end
+					break
+				end
+			end
+	-- shell.run("startup") Restart loop?
+	elseif input == "2" then
+		Door()
+	end
+end
+
+while true do
+	term.Clear()
+	term.setCursorPos(1,1)
+	print "Card Reader Is Online"
+	local event,arg1,arg2 = os.pullEvent()
+	if event == "disk" then
+		ID = disk.getLabel()
+		if fs.exists("disk/cl") then
+			file = io.open("disk/cl", "r")
+			Cle = file:read()
+			if Cle >= ClearenceLevel then -- Could add a log file
+				print ("Accepted:",Cle,":",ID)
+				disk.eject(DiskSide)
+				Door()
+			else
+				print ("Rejected:",ID)
+				disk.eject(DiskSide)
+			end
+		end
+	elseif event == "key" then
+		if arg1 == 50 then -- 'M' Key
+			Maintenance()
+		end
+	end
+end

@@ -1,0 +1,10 @@
+rednet.open("top")
+print "Listening"
+while true do
+	id,message = rednet.receive()
+	print "---------------------------------------------------"
+	print "Message Received!"
+	print ("From: ",id)
+	print ("Message: ",message)
+	print "---------------------------------------------------"
+end
