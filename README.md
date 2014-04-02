@@ -2,7 +2,7 @@ Computercraft-Programs
 ======================
 ***Readme is WIP!***
 
-Hello and welcome to the repo for my computercraft and other lua related programs.
+Hello and welcome to the TEST BRANCH for my computercraft and other lua related programs.
 
 ***This code is very experimental, basic and a bit rubbish!***
 
@@ -11,7 +11,7 @@ Unless stated otherwise you can use, modify and distribute, although I would app
 
 At the moment, I am using:
 
-	- FTB Unleashed (Version 1.1.6, based on Minecraft 1.5.2) Yes it's 																		old but I'm having problems with my computer.
+	- FTB Unleashed (Version 1.1.6, based on Minecraft 1.5.2) Yes it's 						  old but I'm having problems with my computer.
 	- A few extra mods
 		- {Mod 1}
 		- {Mod 2}
