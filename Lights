@@ -53,7 +53,7 @@ print "Awaiting Commands..."
 
 while true do
 	local ID, Message = rednet.receive()
-	local Message=split(Message,'\:')
+	local Message=split(Message,'\:') -- When updated use light protocol
 	if Message[2] == "Lights" then
 		local Colour = tonumber(Message[3], 16)
 		for i = 1, #t do
@@ -63,20 +63,18 @@ while true do
 		end
 	elseif Message[2] == "demo" then
 		Num = 0
-		for 1, 16777215 do -- Or j = 1 and kill below for
-			for i = 1, #t do
-				t[i].setColor(000000)
-			end
+		for i = 1, #t do
+			t[i].setColor(000000)
+		end
+		for 1, 16777215 do -- Or j = 1 and kill below
 			sleep(0.20)
 			for i = 1, #t do
 				local Colour = tonumber(Num, 16) -- Convert to hex? hex is base 16
 				t[i].setColor(Colour)
-				Response = ("Lights changed to ",Colour)
-				rednet.send(ID,Response)
 			end
 			Num = Num + 1
 		end
-	elseif Message[2] == "ping" then
+	elseif Message[2] == "ping" then -- Replaced in new CC
 		-- Add Ping Function
 	end
 end
