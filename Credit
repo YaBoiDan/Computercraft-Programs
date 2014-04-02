@@ -1,0 +1,33 @@
+RedSide = "bottom"
+DriveSide = "back"
+UName = disk.getLabel(DriveSide)
+ServerID = {Example} --Use new name function
+
+-- Save details on cental server? Stops tampering.
+term.clear()
+-- Title
+term.setCursorPos(1,2)
+print ("Username: ", UName)
+print "Pin: " -- Could use new portable computers with chip and pin
+Pin = 0000 -- Rednet message or input
+
+Message = UName .. ":" .. Pin
+rednet.open(RedSide)
+rednet.send(ServerID, UName)
+ID, Message = rednet.receive(10)
+print "Waiting for response..."
+
+if Message[1] == "Req:Credit" then -- Replace with protocol
+	if Message[2] == "NIL" then
+		print "Incorrect PIN, please try again"
+		-- rednet.send(ServerID, "Fail") -- 3 attempts and lock card? 
+	elseif Message[2] == "Blocked" then
+		print "Card blocked, press any key to remove"
+		read()
+		disk.eject(DriveSide)
+	else
+		
+	end
+else
+	print "An error occured... No response from server"
+end
