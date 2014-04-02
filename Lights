@@ -1,4 +1,5 @@
 RedSide = "top"
+-- FFFFFF = DEC:16777215
 local function getPeripherals(sType)
 	local t = {}
 	for _,name in ipairs(peripheral.getNames()) do
@@ -28,6 +29,21 @@ local function split(pString, pPattern)
 	return Table
 end
 
+function num2hex(num)
+	local hexstr = "0123456789abcdef"
+	local s = ""
+	while num > 0 do
+		local mod = math.fmod(num, 16)
+		s = string.sub(hexstr, mod+1, mod+1) .. s
+		num = math.floor(num / 16)
+	end
+	if s == "" then
+		s = "0"
+	end
+	return s
+end
+	
+
 local t = getPeripherals("glowstone_illuminator")
 rednet.open(RedSide)
 term.clear()
@@ -43,7 +59,22 @@ while true do
 		for i = 1, #t do
 			t[i].setColor(Colour)
 			Response = ("Lights changed to ",Colour)
-			rednet.send(ID,"Lights Changed")
+			rednet.send(ID,Response)
+		end
+	elseif Message[2] == "demo" then
+		Num = 0
+		for 1, 16777215 do -- Or j = 1 and kill below for
+			for i = 1, #t do
+				t[i].setColor(000000)
+			end
+			sleep(0.20)
+			for i = 1, #t do
+				local Colour = tonumber(Num, 16) -- Convert to hex? hex is base 16
+				t[i].setColor(Colour)
+				Response = ("Lights changed to ",Colour)
+				rednet.send(ID,Response)
+			end
+			Num = Num + 1
 		end
 	elseif Message[2] == "ping" then
 		-- Add Ping Function
