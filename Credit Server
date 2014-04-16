@@ -1,0 +1,45 @@
+local function split(pString, pPattern)
+   local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
+   local fpat = "(.-)" .. pPattern
+   local last_end = 1
+   local s, e, cap = pString:find(fpat, 1)
+   while s do
+          if s ~= 1 or cap ~= "" then
+         table.insert(Table,cap)
+          end
+          last_end = e+1
+          s, e, cap = pString:find(fpat, last_end)
+   end
+   if last_end <= #pString then
+          cap = pString:sub(last_end)
+          table.insert(Table, cap)
+   end
+   return Table
+end
+
+TempDetails = "User","Pass"
+
+local RedSide = "bottom"
+local DriveSide = "back" -- Log is saved on computer and can be copied to disk
+local ServerID = {Example} --Use new name function
+
+term.clear()
+term.setCursorPos(1,1)
+rednet.open(RedSide)
+print ">Server Running"
+while true do
+	local ID, Message=rednet.receive() -- Now use protocols to not use splitting
+	local Message=split(Message,'\:')
+	if Message[2] == "Credit" then
+		-- Search credit file for user and check pass
+		if Message[4] == FilePass then
+			local Reply = "Req:Credit:Pass"
+			rednet.send(Message[3], Reply)
+			print (ID," made request ",Message[3]," : ",Message[4]," : Pass")
+		else
+			local Reply = "Req:Credit:Fail"
+			rednet.send(Message[3], Reply)
+			print (ID," made request ",Message[3]," : ",Message[4]," : Fail")
+		end
+	end
+end
