@@ -1,33 +1,62 @@
-RedSide = "bottom"
-DriveSide = "back"
-UName = disk.getLabel(DriveSide)
-ServerID = {Example} --Use new name function
+local function split(pString, pPattern)
+   local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
+   local fpat = "(.-)" .. pPattern
+   local last_end = 1
+   local s, e, cap = pString:find(fpat, 1)
+   while s do
+          if s ~= 1 or cap ~= "" then
+         table.insert(Table,cap)
+          end
+          last_end = e+1
+          s, e, cap = pString:find(fpat, last_end)
+   end
+   if last_end <= #pString then
+          cap = pString:sub(last_end)
+          table.insert(Table, cap)
+   end
+   return Table
+end
 
--- Save details on cental server? Stops tampering.
-term.clear()
--- Title
-term.setCursorPos(1,2)
-print ("Username: ", UName)
-print "Pin: " -- Could use new portable computers with chip and pin
-Pin = 0000 -- Rednet message or input
-
-Message = UName .. ":" .. Pin
+local RedSide = "bottom"
+local DriveSide = "back"
+local UName = disk.getLabel(DriveSide)
+local ServerID = {Example} --Use new name function
 rednet.open(RedSide)
-rednet.send(ServerID, UName)
-ID, Message = rednet.receive(10)
-print "Waiting for response..."
+-- Save details on cental server? Stops tampering.
 
-if Message[1] == "Req:Credit" then -- Replace with protocol
-	if Message[2] == "NIL" then
-		print "Incorrect PIN, please try again"
-		-- rednet.send(ServerID, "Fail") -- 3 attempts and lock card? 
-	elseif Message[2] == "Blocked" then
-		print "Card blocked, press any key to remove"
+while true do
+	local event,arg1,arg2 = os.pullEvent()
+	if event == "disk" then
+		term.clear()
+		-- Title
+		term.setCursorPos(1,2)
+		local Fail = 0
+		print ("Username: ", UName)
+		print "Pin: 'Pre-set'" -- Could use new portable computers with chip and pin. (Each shop has own protocol)
+		Pin = 0000 -- Rednet message or input
 		read()
-		disk.eject(DriveSide)
-	else
-		
+		--local Details = UName .. ":" .. Pin
+		local Details = "Req:Credit:" .. UName .. ":" .. Pin
+		rednet.send(ServerID, Details)
+		local ID, Message = rednet.receive(10)
+		print "Waiting for response..."
+		local Message=split(Message,'\:')
+		if Message[1] == "Req:Credit" then -- Replace with protocol
+			if Message[2] == "Fail" then
+				print "Incorrect PIN, please try again"
+				Fail = Fail + 1
+				if Fail = 3 then
+					print "Card blocked, press any key to remove"
+					-- Add blocked file to disk?
+					read()
+					disk.eject(DriveSide)
+				end
+			elseif Message[2] == "Pass" then
+				print "Details accepted"
+				-- Run program
+			end
+		else
+			print "An error occured... No response from server"
+		end
 	end
-else
-	print "An error occured... No response from server"
 end
