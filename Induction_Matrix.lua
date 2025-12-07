@@ -1,5 +1,7 @@
 -- Heavily inspired by some code from existing Extreme reactors script - https://pastebin.com/raw/b17hfTqe
 
+local updateInterval = 5 -- seconds between updates
+
 local function resetMon()
     mon.setBackgroundColor(colors.black)
     mon.clear()
@@ -86,50 +88,53 @@ if not induction.isFormed() then
     return
 end
 
--- Get Providers and Installed Cells
-local providers = induction.getInstalledProviders()
-local cells = induction.getInstalledCells()
+while true do
+    -- Get Providers and Installed Cells
+    local providers = induction.getInstalledProviders()
+    local cells = induction.getInstalledCells()
 
--- get stored energy
-local energyStored = induction.getEnergy()
-local maxEnergyStored = induction.getMaxEnergy()
-local energyPercentage = induction.getEnergyFilledPercentage() 
-print("Energy Stored: " .. format(energyStored) .. "RF" .. " / " .. format(maxEnergyStored) .. "RF")
-print("Energy Filled Percentage: " .. string.format("%.2f", energyPercentage * 100) .. "%")
+    -- get stored energy
+    local energyStored = induction.getEnergy()
+    local maxEnergyStored = induction.getMaxEnergy()
+    local energyPercentage = induction.getEnergyFilledPercentage() 
+    print("Energy Stored: " .. format(energyStored) .. "RF" .. " / " .. format(maxEnergyStored) .. "RF")
+    print("Energy Filled Percentage: " .. string.format("%.2f", energyPercentage * 100) .. "%")
 
--- get input/output rates
-local energyInputRate = induction.getLastInput()
-local energyOutputRate = induction.getLastOutput()
+    -- get input/output rates
+    local energyInputRate = induction.getLastInput()
+    local energyOutputRate = induction.getLastOutput()
 
--- Display on Monitor
-if (mon) then
-    -- General
-    mon.clear()
-    -- Center title
-    local title = "Induction Matrix Status"
-    local titleX = math.floor((mon.getSize() - string.len(title)) / 2)
-    drawText(title, titleX, 1, colors.black, colors.white)
-    drawText(string.rep("-", string.len(title)), titleX, 2, colors.black, colors.white) 
+    -- Display on Monitor
+    if (mon) then
+        -- General
+        mon.clear()
+        -- Center title
+        local title = "Induction Matrix Status"
+        local titleX = math.floor((mon.getSize() - string.len(title)) / 2)
+        drawText(title, titleX, 1, colors.black, colors.white)
+        drawText(string.rep("-", string.len(title)), titleX, 2, colors.black, colors.white) 
 
-    -- Display energy information
-    --drawBox({mon.getSize()/2-2,7}, 1, 3, colors.white) -- drawBox(size, xoff, yoff, color) -- Monitor half size box, minus 2 for padding (1 either side)
-    drawBox({mon.getSize()-2,8}, 1, 3, colors.orange) -- drawBox(size, xoff, yoff, color) -- Monitor size box, minus 2 for padding (1 either side)
-    drawText(" " .. "Energy Information" .. " ", math.floor((mon.getSize()/2 - string.len("Energy Information")) / 2), 4, colors.black, colors.orange) -- This height is always the yoff + 1
+        -- Display energy information
+        --drawBox({mon.getSize()/2-2,7}, 1, 3, colors.white) -- drawBox(size, xoff, yoff, color) -- Monitor half size box, minus 2 for padding (1 either side)
+        drawBox({mon.getSize()-2,8}, 1, 3, colors.orange) -- drawBox(size, xoff, yoff, color) -- Monitor size box, minus 2 for padding (1 either side)
+        drawText(" " .. "Energy Information" .. " ", math.floor((mon.getSize()/2 - string.len("Energy Information")) / 2), 4, colors.black, colors.orange) -- This height is always the yoff + 1
 
-    drawText("Stored: " .. format(energyStored) .. "RF" .. " / " .. format(maxEnergyStored) .. "RF", 4, 6, colors.black, colors.orange)
-    drawText("Filled: " .. string.format("%.2f", energyPercentage * 100) .. "%", 4, 7, colors.black, colors.orange)
-    drawText("Input: " .. format(energyInputRate) .. "RF/t", 4, 8, colors.black, colors.green)
-    drawText("Output: " .. format(energyOutputRate) .. "RF/t", 4, 9, colors.black, colors.red)
+        drawText("Stored: " .. format(energyStored) .. "RF" .. " / " .. format(maxEnergyStored) .. "RF", 4, 6, colors.black, colors.orange)
+        drawText("Filled: " .. string.format("%.2f", energyPercentage * 100) .. "%", 4, 7, colors.black, colors.orange)
+        drawText("Input: " .. format(energyInputRate) .. "RF/t", 4, 8, colors.black, colors.green)
+        drawText("Output: " .. format(energyOutputRate) .. "RF/t", 4, 9, colors.black, colors.red)
 
-    -- Structure
-    -- Draw a box around the structure info 
-    -- ?NOTE: Need to automatically force box one line in, and function out padding of title dynamically.  Or make left aligned +1 or two instead?
-    StructureBoxSize = {30,6}
-    drawBox(StructureBoxSize, 1, 12, colors.blue) -- drawBox(size, xoff, yoff, color)
-    -- Title must me in the middle of the top line of the box and be padded with spaces
-    TileLocation = math.floor((StructureBoxSize[1] - string.len("Structure Info")) / 2)
-    drawText(" " .. "Structure Info" .. " ", TileLocation, 13, colors.black, colors.blue) -- This height is always the yoff + 1
-    drawText("Providers Installed: " .. providers, 4, 15, colors.black, colors.white)
-    drawText("Cells Installed: " .. cells, 4, 16, colors.black, colors.white)
+        -- Structure
+        -- Draw a box around the structure info 
+        -- ?NOTE: Need to automatically force box one line in, and function out padding of title dynamically.  Or make left aligned +1 or two instead?
+        StructureBoxSize = {30,6}
+        drawBox(StructureBoxSize, 1, 12, colors.blue) -- drawBox(size, xoff, yoff, color)
+        -- Title must me in the middle of the top line of the box and be padded with spaces
+        TileLocation = math.floor((StructureBoxSize[1] - string.len("Structure Info")) / 2)
+        drawText(" " .. "Structure Info" .. " ", TileLocation, 13, colors.black, colors.blue) -- This height is always the yoff + 1
+        drawText("Providers Installed: " .. providers, 4, 15, colors.black, colors.white)
+        drawText("Cells Installed: " .. cells, 4, 16, colors.black, colors.white)
 
+        sleep(updateInterval)
+    end
 end
