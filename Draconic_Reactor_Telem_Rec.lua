@@ -116,14 +116,14 @@ local function drawBar(x, y, width, percent, label, barColor, bgColor)
     mon.setBackgroundColor(colors.black)
 end
 
-local function drawDashboard(data)
+local function drawDashboard(data, lastUpdateTime)
     if not mon then return end
     
     mon.clear()
     
     -- Title
     local title = "Draconic Reactor Monitor"
-    local monWidth = mon.getSize()
+    local monWidth, monHeight = mon.getSize()
     local titleX = math.floor((monWidth - string.len(title)) / 2)
     drawText(title, titleX, 1, colors.black, colors.white)
     drawText(string.rep("-", string.len(title)), titleX, 2, colors.black, colors.white)
@@ -212,6 +212,29 @@ local function drawDashboard(data)
     end
     
     drawText("Status: " .. statusText:upper(), 3, 28, colors.black, statusColor)
+    
+    -- Last Update Time (bottom right, YYYY-MM-dd format)
+    if lastUpdateTime then
+        local currentTime = os.epoch("local") / 1000
+        local timeSinceUpdate = currentTime - lastUpdateTime
+        
+        -- Format time in YYYY-MM-dd HH:MM:SS format
+        local timeTable = os.date("*t", lastUpdateTime)
+        local timeStr = string.format("%04d-%02d-%02d %02d:%02d:%02d",
+            timeTable.year, timeTable.month, timeTable.day,
+            timeTable.hour, timeTable.min, timeTable.sec)
+        
+        local updateText = "Last: " .. timeStr
+        local updateX = monWidth - string.len(updateText) - 1
+        
+        -- Red if more than 5 minutes (300 seconds) old
+        local updateColor = colors.white
+        if timeSinceUpdate > 300 then
+            updateColor = colors.red
+        end
+        
+        drawText(updateText, updateX, monHeight, colors.black, updateColor)
+    end
 end
 
 -- Open rednet on a modem (adjust side as needed)
@@ -232,11 +255,16 @@ else
     print("No monitor found - will use terminal only")
 end
 
+local lastUpdateTime = nil
+
 while true do
     local senderId, message, protocol = rednet.receive()
     
     -- Check if message is a table
     if type(message) == "table" then
+        -- Update the last update time
+        lastUpdateTime = os.epoch("local") / 1000
+        
         -- Terminal output
         term.clear()
         term.setCursorPos(1, 1)
@@ -266,7 +294,7 @@ while true do
         
         -- Update monitor dashboard
         if hasMonitor then
-            drawDashboard(flatData)
+            drawDashboard(flatData, lastUpdateTime)
         end
     end
 end
