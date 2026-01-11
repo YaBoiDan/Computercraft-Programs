@@ -15,10 +15,9 @@ while true do
 
     if (LastSlotAmount == LastSlotMax) then
         print("Transfer chest is full, go check it out!")
-        rednet.broadcast("Transfer chest is full in " .. Location .. "!", Protocol)
+        rednet.broadcast(("Transfer chest is full in %s with %d/%d with %s"):format(Location, LastSlotAmount, LastSlotMax, Chest.getItemDetail(Slots).displayName), Protocol)
     else
         print("Chest is fine bro, keep going!")
     end
-
     sleep(300)
 end
