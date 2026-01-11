@@ -4,6 +4,7 @@ rednet.open("top")
 
 Location = "Dan Bee Dim"
 Protocol = "logs_dan"
+LogSev = "WARN"
 
 while true do
     local Chest = peripheral.wrap("back")
@@ -15,7 +16,7 @@ while true do
 
     if (LastSlotAmount == LastSlotMax) then
         print("Transfer chest is full, go check it out!")
-        rednet.broadcast(("Transfer chest is full in %s with %d/%d with %s"):format(Location, LastSlotAmount, LastSlotMax, Chest.getItemDetail(Slots).displayName), Protocol)
+        rednet.broadcast(("%s;Transfer chest is full in %s with %d/%d with %s"):format(LogSev, Location, LastSlotAmount, LastSlotMax, Chest.getItemDetail(Slots).displayName), Protocol)
     else
         print("Chest is fine bro, keep going!")
     end
