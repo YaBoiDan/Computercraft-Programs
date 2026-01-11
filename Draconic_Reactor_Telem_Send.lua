@@ -19,8 +19,8 @@ if #fluxGates < 2 then
 end
 
 -- Assign input/output based on configuration
-local fluxGateIn = fluxGates[INPUT_GATE_INDEX]
-local fluxGateOut = fluxGates[INPUT_GATE_INDEX == 1 and 2 or 1]
+local fluxGateIn = fluxGates[1]
+local fluxGateOut = fluxGates[2]
 
 print("Input Gate: " .. peripheral.getName(fluxGateIn))
 print("Output Gate: " .. peripheral.getName(fluxGateOut))
